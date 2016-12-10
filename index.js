@@ -55,7 +55,7 @@ function process(tweet) {
 		.filter(function(word) { 
 			return word != 'RT' &&
 				word[0] != '@' &&
-				/[a-z]/i.test(word);
+				(/[a-z]/i.test(word) || /^\d+$/.test(word));
 		})
 		.map(function(word) {
 			return word.toUpperCase();
