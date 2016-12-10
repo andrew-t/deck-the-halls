@@ -1,0 +1,13 @@
+{
+  "name": "twitterbot-stupidjoke",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dict": "wget http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b -O dict.txt",
+    "build-dict": "node build.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
