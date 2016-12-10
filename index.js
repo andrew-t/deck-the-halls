@@ -23,7 +23,7 @@ require('fs')
 			stressPattern = parts[1].replace(/[^\d]/g, '');
 		return {
 			word: word.replace(/\(\d+\)$/, ''),
-			stressPattern
+			stressPattern: stressPattern
 		};
 	})
 	.forEach(function(word) {
