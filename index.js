@@ -58,7 +58,7 @@ function process(tweet) {
 			return word.toUpperCase();
 		});
 
-	var url = `http://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`,
+	var url = 'http://twitter.com/' + tweet.user.screen_name + '/status/' + tweet.id_str,
 		stresses = words
 			.map(function(word) {
 				return stressPatterns[word] || 'x';
@@ -76,7 +76,7 @@ function process(tweet) {
 			return;
 		done[w] = true;
 		twitter.post('statuses/update', {
-			status: `${falala[nextFalala]} ${url}`,
+			status: falala[nextFalala] + ' ' + url,
 			in_reply_to_status_id: tweet.id_str
 		}, function(err, data, response) {
 			console.log('DONE TWEETING', err, data, response);
