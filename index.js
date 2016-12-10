@@ -1,4 +1,4 @@
-const Twit = require('twit'),
+var Twit = require('twit'),
 	twitter = new Twit(require('./creds.json')),
 	stressPatterns = {},
 	falala = [
@@ -7,18 +7,18 @@ const Twit = require('twit'),
 		'Falala, lalala, la la la!',
 		'Falalalala, la la, la laaaa!'
 	],
-	done = new Set();
-let nextFalala = 0;
+	done = {},
+	nextFalala = 0;
 
 require('fs')
 	.readFileSync('dict.txt')
 	.toString()
 	.split('\n')
-	.filter(line =>
-		line.length &&
-		line[0] !== ';')
-	.map(line => {
-		const parts = line.split('  '),
+	.filter(function(line) {
+		return line.length && line[0] !== ';';
+	})
+	.map(function(line) {
+		var parts = line.split('  '),
 			word = parts[0],
 			stressPattern = parts[1].replace(/[^\d]/g, '');
 		return {
@@ -26,7 +26,9 @@ require('fs')
 			stressPattern
 		};
 	})
-	.forEach(word => stressPatterns[word.word] = word.stressPattern);
+	.forEach(function(word) {
+		stressPatterns[word.word] = word.stressPattern;
+	});
 
 twitter.stream('statuses/sample')
 	.on('tweet', process);
@@ -38,7 +40,7 @@ function process(tweet) {
 	if (tweet.retweeted_status)
 		tweet = tweet.retweeted_status;
 
-	const words = tweet.text
+	var words = tweet.text
 		.replace(/&amp;/gi, 'AND')
 		.replace(/&[a-z]+;/gi, '***')
 		.replace(/\b[\S]+:\/\/\S+\b/g, '')
@@ -47,29 +49,36 @@ function process(tweet) {
 		.replace(/[\s."“”‘;,:–\/\\—?!@~\*&£$(){}\[\]]+/g, ' ')
 		.replace(/[’'\-`#]/g, '')
 		.split(' ')
-		.filter(word => 
-			word != 'RT' &&
-			word[0] != '@' &&
-			/[a-z]/i.test(word))
-		.map(word => word.toUpperCase());
+		.filter(function(word) { 
+			return word != 'RT' &&
+				word[0] != '@' &&
+				/[a-z]/i.test(word);
+		})
+		.map(function(word) {
+			return word.toUpperCase();
+		});
 
-	const url = `http://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`,
-		stresses = words.map(word => stressPatterns[word] || 'x').join('');
+	var url = `http://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`,
+		stresses = words
+			.map(function(word) {
+				return stressPatterns[word] || 'x';
+			})
+			.join('');
 
 	if (/^([1-9]0){4}$/.test(stresses)) {
-		let w = words.join(' ');
+		var w = words.join(' ');
 		console.log(
 			tweet,
 			w,
 			stresses,
 			url);
-		if (done.has(w))
+		if (done[w])
 			return;
-		done.add(w);
+		done[w] = true;
 		twitter.post('statuses/update', {
 			status: `${falala[nextFalala]} ${url}`,
 			in_reply_to_status_id: tweet.id_str
-		}, (err, data, response) => {
+		}, function(err, data, response) {
 			console.log('DONE TWEETING', err, data, response);
 		});
 		nextFalala = (nextFalala + 1) % 4;
