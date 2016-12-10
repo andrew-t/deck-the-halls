@@ -1,7 +1,8 @@
 fs = require('fs');
 
-var words = fs
-	.readFileSync('dict.txt')
+var hash = {};
+
+fs.readFileSync('dict.txt')
 	.toString()
 	.split('\n')
 	.filter(line =>
@@ -10,19 +11,13 @@ var words = fs
 	.map(line => {
 		const parts = line.split('  '),
 			word = parts[0],
-			beats = parts[1].split(' '),
-			stressPattern = beats
-				.map(beat => beat[beat.length - 1])
-				.filter(c => /\d/.test(c))
-				.join('');
+			stressPattern = parts[1].replace(/[^\d]/g, '');
 		return {
 			word: word.replace(/\(\d+\)$/, ''),
-			stressPattern,
-			ok: /^[1-9]0[1-9]$/.test(stressPattern)
+			stressPattern
 		};
 	})
-	.filter(word => word.ok)
-	.map(word => word.word);
+	.forEach(word => hash[word.word] = word.stressPattern);
 
 fs.writeFileSync('words.json',
-	JSON.stringify(words, null, 2));
+	JSON.stringify(hash, null, 2));
