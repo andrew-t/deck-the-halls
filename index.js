@@ -40,6 +40,9 @@ function process(tweet) {
 	if (tweet.retweeted_status)
 		tweet = tweet.retweeted_status;
 
+	if (/[водвыпустилтысячныйвтомобильИзвестныйитальянскийпроизводительавтомобилейвыпустилназаводевгороде]/i.test(tweet.text))
+		return;
+
 	var words = tweet.text
 		.replace(/&amp;/gi, 'AND')
 		.replace(/&[a-z]+;/gi, '***')
