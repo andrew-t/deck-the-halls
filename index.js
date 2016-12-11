@@ -29,7 +29,11 @@ function process(tweet) {
 		return;
 
 	var words = wordenize(tweet.text);
-	if (!words)
+		// Stop if we can't turn the tweet into words...
+	if (!words ||
+		// ...or if the tweet is the same (two) words repeated
+		(words.length == 2 && (words[0] == words[1])) ||
+		(words.length == 4 && (words[0] == words[2]) && (words[1] == words[3])))
 		return;
 
 	var stresses = words
@@ -44,7 +48,7 @@ function process(tweet) {
 	if (/^([1-9]0){4}$/.test(stresses)) {
 		// Not sure what sort of API doesn't include this but hey-ho:
 		var url = 'http://twitter.com/' + tweet.user.screen_name + '/status/' + tweet.id_str;
-		
+
 		var w = words.join(' ');
 		console.log(
 		//	tweet,
