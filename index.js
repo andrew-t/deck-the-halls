@@ -61,9 +61,11 @@ function process(tweet) {
 
 		var timeOfThisTweet = Date.now(),
 			snark;
-		if (timeOfLastTweet < timeOfThisTweet - tweetInterval) {
-			// It's been a while since we did a proper tweet;
-			// do this one as a full-on retweet.
+		if (!tweet.possibly_sensitive &&
+			(timeOfLastTweet < timeOfThisTweet - tweetInterval)) {
+			// It's been a while since we did a proper tweet
+			// and it isn't flagged as (possibly) "adult",
+			// so do this one as a full-on retweet.
 			snark = falala[nextFalala] + ' ' + url;
 			nextFalala = (nextFalala + 1) % 4;
 			timeOfLastTweet = timeOfThisTweet;
