@@ -13,6 +13,9 @@ var Twit = require('twit'),
 	nextFalala = 0,
 	timeOfLastTweet = 0;
 
+require('./done.json')
+	.forEach(d => done[d] = true);
+
 twitter.stream('statuses/sample')
 	.on('tweet', process);
 
@@ -57,6 +60,13 @@ function process(tweet) {
 		if (done[w])
 			return;
 		done[w] = true;
+		fs.writeFile(__dirname + '/done.json',
+			JSON.stringify(Object.keys(done), null, 2),
+			'utf-8',
+			(err, result) => {
+				if (err)
+					console.error('Error writing to file: ', err);
+			});
 
 		var timeOfThisTweet = Date.now(),
 			snark;
