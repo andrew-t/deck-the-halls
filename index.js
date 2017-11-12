@@ -1,4 +1,5 @@
 var Twit = require('twit'),
+	config = require('config'),
 	twitter = new Twit(require('./creds.json')),
 	dictionary = require('./dictionary'),
 	wordenize = require('./tweet-to-words'),
@@ -10,9 +11,7 @@ var Twit = require('twit'),
 	],
 	done = {},
 	nextFalala = 0,
-	timeOfLastTweet = 0,
-	// Only do one full tweet every half hour
-	tweetInterval = 30 * 60 * 1000;
+	timeOfLastTweet = 0;
 
 twitter.stream('statuses/sample')
 	.on('tweet', process);
@@ -37,11 +36,11 @@ function process(tweet) {
 		return;
 
 	var stresses = words
-			.map(function(word) {
-				var entry = dictionary[word];
-				return entry ? entry.stressPattern : 'x';
-			})
-			.join('');
+		.map(function(word) {
+			var entry = dictionary[word];
+			return entry ? entry.stressPattern : 'x';
+		})
+		.join('');
 
 	// console.log(words, stresses);
 
@@ -62,7 +61,7 @@ function process(tweet) {
 		var timeOfThisTweet = Date.now(),
 			snark;
 		if (!tweet.possibly_sensitive &&
-			(timeOfLastTweet < timeOfThisTweet - tweetInterval)) {
+			(timeOfLastTweet < timeOfThisTweet - config.tweetInterval)) {
 			// It's been a while since we did a proper tweet
 			// and it isn't flagged as (possibly) "adult",
 			// so do this one as a full-on retweet.
@@ -73,12 +72,16 @@ function process(tweet) {
 			// Tweet it as a reply so as not to spam our followers
 			snark = '@' + tweet.user.screen_name + ' ' + falala[0];
 
-		twitter.post('statuses/update', {
-			status: snark,
-			in_reply_to_status_id: tweet.id_str
-		}, function(err, data, response) {
-			if (err)
-				console.log('Error tweeting', err);
-		});
+		if (config.tweet && (snark[0] != '@' || config.reply))
+			twitter.post('statuses/update', {
+				status: snark,
+				in_reply_to_status_id: tweet.id_str
+			}, function(err, data, response) {
+				if (err)
+					console.error('Error tweeting', err);
+			});
+
+		if (config.log)
+			console.log(`${tweet.text} --- http://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`);
 	}
 }

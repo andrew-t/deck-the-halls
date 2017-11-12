@@ -1,0 +1,6 @@
+{
+	"tweetInterval": 1800000,
+	"tweet": false,
+	"reply": false,
+	"log": true
+}
