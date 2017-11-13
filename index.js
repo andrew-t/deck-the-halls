@@ -3,6 +3,7 @@ var Twit = require('twit'),
 	twitter = new Twit(require('./creds.json')),
 	dictionary = require('./dictionary'),
 	wordenize = require('./tweet-to-words'),
+	fs = require('fs'),
 	falala = [
 		'Falalalala, la la, la la!',
 		'Falalalala, la la, la la!',
