@@ -16,13 +16,21 @@ var Twit = require('twit'),
 require('./done.json')
 	.forEach(d => done[d] = true);
 
-twitter.stream('statuses/sample')
-	.on('tweet', process);
+if (config.logAll)
+	console.log('Listening...');
+
+twitter.stream('statuses/sample', {}, e => console.err(e))
+	.on('tweet', process)
+	.on('error', console.error);
 
 twitter.stream('user', { with: 'followings' })
-	.on('tweet', process);
+	.on('tweet', process)
+	.on('error', console.error);
 
 function process(tweet) {
+	if (config.logAll)
+		console.log('New tweet:', tweet.text);
+
 	if (tweet.retweeted_status)
 		tweet = tweet.retweeted_status;
 
@@ -32,6 +40,8 @@ function process(tweet) {
 
 	var words = wordenize(tweet.text);
 		// Stop if we can't turn the tweet into words...
+	if (config.logAll)
+		console.log(tweet.text, words);
 	if (!words ||
 		// ...or if the tweet is the same (two) words repeated
 		(words.length == 2 && (words[0] == words[1])) ||
@@ -45,7 +55,8 @@ function process(tweet) {
 		})
 		.join('');
 
-	// console.log(words, stresses);
+	if (config.logAll)
+		console.log(words, stresses);
 
 	if (/^([1-9]0){4}$/.test(stresses)) {
 		// Not sure what sort of API doesn't include this but hey-ho:
@@ -92,6 +103,6 @@ function process(tweet) {
 			});
 
 		if (config.log)
-			console.log(`${tweet.text} --- http://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`);
+			console.log(`${tweet.text} --- ${url}`);
 	}
 }
