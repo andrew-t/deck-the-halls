@@ -1,5 +1,5 @@
 var Twit = require('twit'),
-	config = require('config'),
+	config = require('./config.json'),
 	twitter = new Twit(require('./creds.json')),
 	dictionary = require('./dictionary'),
 	wordenize = require('./tweet-to-words'),
