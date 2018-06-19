@@ -8,7 +8,7 @@ To do this, we use a list of words mapped to their stress patterns. I use [the C
 
 There are a couple of other things it filters for, including tweets that are just the same word four or eight times, or tweets where it isn't fairly clear which parts are content and which are hashtags and the like.
 
-The gist of the code is that it turns a tweet into a string of numbers: a 0 for an unstressed beat, and a 1 or a 2 for a stressed beat. We test it against the regex `/^([1-9]0){4}$/` to test for Deck the Hallsiness. You can configure the code to sing other songs by [changing that regex](https://github.com/andrew-t/deck-the-halls/blob/master/index.js#L62).
+The gist of the code is that it turns a tweet into a string of numbers: a 0 for an unstressed beat, and a 1 (or a 2 but we don't care about the difference here) for a stressed beat. Deck the Halls is `10101010`, so we test it against the regex `/^([1-9]0){4}$/` to test for Deck the Hallsiness. You can configure the code to sing other songs by [changing that regex](https://github.com/andrew-t/deck-the-halls/blob/master/index.js#L62).
 
 The bot runs at [@falalala_la](https://twitter.com/falalala_la/) during Christmastime.
 
